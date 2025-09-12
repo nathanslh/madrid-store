@@ -5,12 +5,7 @@ from django.http import HttpResponse
 from django.core import serializers
 import logging
 
-logger = logging.getLogger(__name__)
-
 def show_main(request):
-    host = request.META.get('HTTP_HOST', 'unknown host')
-    logger.info(f"Request received from host: {host}")
-    
     product_list = Product.objects.all()
 
     context = {
