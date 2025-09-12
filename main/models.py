@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 CATEGORY_CHOICES = [
     ('jersey', 'Jersey'),
@@ -8,14 +9,24 @@ CATEGORY_CHOICES = [
 ]
 
 class Product(models.Model):
-    nama = models.CharField(max_length=255)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
     price = models.IntegerField()
     description = models.TextField()
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='lainnya')
     thumbnail = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_featured = models.BooleanField(default=False)
+    product_views = models.IntegerField(default=0)
     
     def __str__(self):
-        return self.nama
+        return self.name
+
+    @property
+    def is_product_hot(self):
+        return self.product_views > 20
+        
+    def increment_views(self):
+        self.product_views += 1
+        self.save()
 
