@@ -74,4 +74,8 @@ Soal jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara s
     5. Membuat function show_product guna endpoint detail produk sekaligus menambah view counter tiap kali dibuka di views.py pada direktori main.
     6. membuat direktori templates di root projek dan membuat dile base.html di dalamnya untuk sebagai template dasar untuk halaman lain pada projek ini.
     7. Membuat file html untuk tampilan detail produk dan create produk di direktori main/templates.
-    8. Membuat function untuk endpoint json dan xml di views.py dan juga menambahkan endpoint by id.  
+    8. Membuat function untuk endpoint json dan xml di views.py dan juga menambahkan endpoint by id. 
+
+
+    <img width="940" height="607" alt="image" src="https://github.com/user-attachments/assets/ac423a85-7101-4694-a4f4-1377e41664fa" />
+
