@@ -1,5 +1,7 @@
 Link PWS: https://natan-harum-madridstore.pbp.cs.ui.ac.id/
 
+TUGAS 2
+
 Soal jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
     1. Membuat dan mengaktifkan Virtual Environment baru.
     2. Membuat file requirements.txt dan menambahkan dependencies.
@@ -38,3 +40,38 @@ Soal Menurut Anda, dari semua framework yang ada, mengapa framework Django dijad
     Menurut saya karena Django itu Python based dimana Python itu merupakan bahasa yang cukup mudah diguanakan dan dipelajari. Kemudian, dari segi keamanan Django juga cukup baik karena 
     sudah ada built in keamanan seperti SQL injection, Cross-Site Scripting (XSS), and Cross-Site Request Forgery (CSRF). Begitu juga dengan komunitas Django sangatlah luas di internet 
     jadi lebih mudah jika mengahadapi masalah atau jika ada suatu pertanyaan bisa di cari dengan lebih mudah.
+
+
+
+
+
+TUGAS 3
+
+ Soal jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+     Data delivery sangatlah penting karena dengan data delivery kita bisa mengirimkan suatu informasi atau data dari suatu tempat ke tujuannya dalam hal ini adalah baik ke pengguna,          aplikasi, atau sistem lain.  Ini memastikan bahwa data yang dibutuhkan tersedia di tempat yang tepat dan waktu yang tepat, memungkinkan integrasi yang lancar dan operasional yang
+     efisien. 
+
+Soal menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+    Menurut saya pribadi json lebih baik karena lebih mudah dibaca dan dipahami karena format penulisannya lebih ringkas dan rapih. Kemudian kenapa JSON lebih populer dibanding xml selain
+    alasan saya tersebut adalah karena JSON memiliki ukuran data yang lebih kecil dan parsing yang lebih cepat, karena itulah JSON meningkatkan efisiensi dan kinerja aplikasi, terutama
+    di lingkungan web.
+
+Soal jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+    method is_valid berfungsi sebagai memeriksa apakah data yang dimasukan oleh user ke form sudah sesuai dengan aturan validasi yang ditentukan, seperti ipe data yang benar, panjang
+    karakter, atau pola tertentu. Method ini mengembalikan nilai True atau False, jika return True data akan diproses lebih lanjut atau masuk ke database, tetapi jika False form akan
+    mengandung pesan kesalahan yang menjelaskan mengapa data tidak valid.
+
+Soal mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+    csrf_token melindungi form Django dari CSRF. Django menempelkan kode unik di setiap form halaman asli situs, lalu server mengecek kode itu saat form dikirim.
+    Tanpa token, penyerang bisa memanfaatkan cookie login korban dengan membuat halaman yang diam-diam mengirim request ke situs kita, sehingga aksi berbahaya bisa terjadi tanpa
+    sepengetahuan korban.
+    
+Soal jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+    1. Menambahkan UUID pada models.py di main dan merubah atribut nama menjadi name.
+    2. Migrasi data karena ada perubahan pada model.
+    3. Membuat file form.py di direktori main dan membuat fields formnya sepert name, price, dll.
+    4. Membuat function create_product guna endpoint untuk membuat data produk baru dengan alur yang aman. di views.py pada direktori main. 
+    5. Membuat function show_product guna endpoint detail produk sekaligus menambah view counter tiap kali dibuka di views.py pada direktori main.
+    6. membuat direktori templates di root projek dan membuat dile base.html di dalamnya untuk sebagai template dasar untuk halaman lain pada projek ini.
+    7. Membuat file html untuk tampilan detail produk dan create produk di direktori main/templates.
+    8. Membuat function untuk endpoint json dan xml di views.py dan juga menambahkan endpoint by id.  
