@@ -76,6 +76,4 @@ Soal jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara s
     7. Membuat file html untuk tampilan detail produk dan create produk di direktori main/templates.
     8. Membuat function untuk endpoint json dan xml di views.py dan juga menambahkan endpoint by id. 
 
-
-    <img width="940" height="607" alt="image" src="https://github.com/user-attachments/assets/ac423a85-7101-4694-a4f4-1377e41664fa" />
-
+Link SS Postman: https://drive.google.com/drive/folders/1nxhPpR8AE7spca-FRAleu-4LTP9R6xJy?usp=sharing
