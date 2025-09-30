@@ -138,3 +138,49 @@ Soal jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara s
     4. Membuat fungsi logut di views.py dan membuat button dan anchor link nya di main.html            direktori main dan membuat urls nya juga di urls.py di direktori main.
     5. Modifikasi fungsi show main dan show product di views.py dengan menambahkan Decorators          agar hanya bisa diakses saat login.
     6. Menggunakan cookies untuk menampilkan last login di main.html.
+
+
+
+
+Tugas 5
+
+Soal jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+    Urutan dari yang paling tinggi ke paling rendah secara berturut-turut adalah:
+        1. Inline style
+        2. ID selector
+        3. Class selector, attribute selector, dan pseudo-class
+        4. Elemnent Selector & Pseudo-element
+    Kasus khusus keempat selector tersebut bisa disisipkan !important, nantinya selector yang dipakaikan !important menjadi prioritas utama. Jadi secara garis besar kita perhatikan !important dulu kalau ada yang
+    sama-sama important! kita perhatikan hirarki awalnya yang saya urutkan.
+
+Soal mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+    Responsive design menjadi poin penting dalam pengembangan web agar penggunga dapat mengakses web kita dari berbagai perangkat mau itu laptop, tablet, maupun HP hal ini akan mendukung akan agar website kita
+    dapat menjangkau pasaran yang lebih luas. Begitu juga dengan efisiensi dan biaya karena kita tidak perlu membuat web untuk versi desktop dan mobile. Hal yang tak kalah penting juga pengalaman pengguna
+    terhadap website kita jauh lebih baik.
+
+Soal jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+    1. Padding adalah ruang di dalam elemen, antara konten dan border.
+    2. garis pembatas di sekeliling elemen antara margin dan padding.
+    3. Margin adalah ruang di luar elemen, jarak antar elemen.
+
+    Contoh penerpannya dalam elemen HTML adalah sebagai berikut:
+    .box {
+      margin: 20px;       
+      border: 2px solid black; 
+      padding: 15px;       
+    }
+
+Soal Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+    1. Flexbox digunakan untuk mengatur elemen dalam satu dimensi. Kegunaanya seperti membuat navbar yang rapi, mengatur tombol agar rata tengah, membagi kolom konten yang fleksibel sesuai lebar layar. 
+    2. Grid digunakan untuk mengatur elemen dalam dua dimensi. Kegunaanya seperti membuat template layout web (header, sidebar, content, footer), membuat galeri foto dengan banyak baris dan kolom.
+    desain dashboard yang penuh widget.
+
+    Jadi intinya Flexbox satu dimensi yaitu baris atau koloim, sedangkan, Grid itu dua dimensi yaitu baris dan kolom
+
+Soal Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+    1. Menyambungkan template django dengan taiwind di base.html. 
+    2. Membuat fungsi hapus dan edit product dan routing urlnya dan juga htmlnya.
+    3. Menambahkan navigation bar pada aplikasi.
+    4. Konfigurasi static files pada aplikasi pada settings.py . 
+    5. Membuat file global.css untuk form.
+    6. Merubah kode html dengan menambahkan styling pada setiap halaman aplikasi.
