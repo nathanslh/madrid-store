@@ -1,9 +1,11 @@
+{% load static %}
 <nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 shadow-sm z-50">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-1">
+          <img src="{% static 'image/realmadrid-logo.png' %}" alt="Real Madrid Logo" class="w-17 h-10">
           <h1 class="text-xl font-semibold text-gray-900">
-            <span class="text-green-600">Madrid</span> Store
+            <span class="text-yellow-500">Madrid</span> Store
           </h1>
         </div>
         
@@ -31,7 +33,7 @@
             <a href="{% url 'main:login_user' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
               Login
             </a>
-            <a href="{% url 'main:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors">
+            <a href="{% url 'main:register' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded font-medium transition-colors">
               Register
             </a>
           {% endif %}
@@ -78,7 +80,7 @@
               <a href="{% url 'main:login_user' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
                 Login
               </a>
-              <a href="{% url 'main:register' %}" class="block bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded text-center transition-colors">
+              <a href="{% url 'main:register' %}" class="block bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-4 rounded text-center transition-colors">
                 Register
               </a>
             </div>
