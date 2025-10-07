@@ -4,10 +4,10 @@
     <!-- Modal header -->
     <div class="flex items-center justify-between p-4 border-b">
       <div>
-        <h3 class="text-xl font-semibold text-gray-900">
+        <h3 id="modalTitle" class="text-xl font-semibold text-gray-900">
               Create New Product
         </h3>
-        <p class="text-sm text-gray-600 mt-1">Add a new product to the Madrid Store collection</p>
+        <p id="modalSubtitle" class="text-sm text-gray-600 mt-1">Add a new product to the Madrid Store collection</p>
       </div>
       <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="hideModal()">
         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -56,15 +56,52 @@
     <!-- Modal footer -->
     <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
       <button type="button" id="cancelButton" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center" onclick="hideModal()">Cancel</button>
-      <button type="submit" id="submitProduct" form="productForm" class="order-1 sm:order-2 flex-1 bg-yellow-500 text-white px-6 py-3 rounded-md font-medium hover:bg-yellow-600 transition-colors">Create Product</button>
+      <button type="submit" id="submitProduct" form="productForm" class="order-1 sm:order-2 flex-1 bg-yellow-500 text-white px-6 py-3 rounded-md font-medium hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        <span id="submitButtonText">Create Product</span>
+        <svg id="submitSpinner" class="animate-spin h-4 w-4 text-white inline-block ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-  function showModal() {
+  let currentMode = 'create';  // 'create' or 'edit'
+  let currentProductId = null;
+
+  function showModal(mode = 'create', productData = null) {
+      currentMode = mode;
       const modal = document.getElementById('crudModal');
       const modalContent = document.getElementById('crudModalContent');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalSubtitle = document.getElementById('modalSubtitle');
+      const submitButtonText = document.getElementById('submitButtonText');
+      const form = document.getElementById('productForm');
+
+      // Reset form
+      form.reset();
+      
+      if (mode === 'create') {
+          modalTitle.textContent = 'Create New Product';
+          modalSubtitle.textContent = 'Add a new product to the Madrid Store collection';
+          submitButtonText.textContent = 'Create Product';
+          currentProductId = null;
+      } else if (mode === 'edit' && productData) {
+          modalTitle.textContent = 'Edit Product';
+          modalSubtitle.textContent = 'Update product information';
+          submitButtonText.textContent = 'Update Product';
+          currentProductId = productData.id;
+          
+          // Fill form with existing data
+          document.getElementById('name').value = productData.name || '';
+          document.getElementById('price').value = productData.price || '';
+          document.getElementById('description').value = productData.description || '';
+          document.getElementById('category').value = productData.category || '';
+          document.getElementById('thumbnail').value = productData.thumbnail || '';
+          document.getElementById('is_featured').checked = productData.is_featured || false;
+      }
 
       modal.classList.remove('hidden'); 
       setTimeout(() => {
@@ -82,27 +119,83 @@
 
       setTimeout(() => {
         modal.classList.add('hidden');
+        currentMode = 'create';
+        currentProductId = null;
       }, 150); 
   }
 
-  async function addProductEntry() {
-    await fetch("{% url 'main:create_product_ajax' %}", {
-      method: "POST",
-      body: new FormData(document.querySelector('#productForm')),
-    })
+  async function submitProductForm() {
+    const submitButton = document.getElementById('submitProduct');
+    const submitButtonText = document.getElementById('submitButtonText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const form = document.getElementById('productForm');
+    
+    // Show loading state
+    submitButton.disabled = true;
+    submitSpinner.classList.remove('hidden');
+    
+    if (currentMode === 'create') {
+        submitButtonText.textContent = 'Creating...';
+    } else {
+        submitButtonText.textContent = 'Updating...';
+    }
 
-    document.getElementById("productForm").reset();
-    hideModal();
-      
-    alert('Product added successfully!');
+    try {
+        const formData = new FormData(form);
+        let url, method;
+        
+        if (currentMode === 'create') {
+            url = "{% url 'main:create_product_ajax' %}";
+            method = 'POST';
+        } else {
+            url = `{% url 'main:edit_product_ajax' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', currentProductId);
+            method = 'POST';
+        }
 
-    document.dispatchEvent(new CustomEvent('productAdded'));
+        const response = await fetch(url, {
+            method: method,
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            hideModal();
+            
+            if (currentMode === 'create') {
+                showToast('Success', 'Product created successfully!', 'success');
+            } else {
+                showToast('Success', 'Product updated successfully!', 'success');
+            }
+            
+            // Refresh product list
+            document.dispatchEvent(new CustomEvent('productAdded'));
+        } else {
+            showToast('Error', data.message || 'Failed to save product', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error', 'An unexpected error occurred', 'error');
+    } finally {
+        // Reset button state
+        submitButton.disabled = false;
+        submitSpinner.classList.add('hidden');
+        
+        if (currentMode === 'create') {
+            submitButtonText.textContent = 'Create Product';
+        } else {
+            submitButtonText.textContent = 'Update Product';
+        }
+    }
 
     return false;
   }
 
   document.getElementById("productForm").addEventListener("submit", function(e) {
     e.preventDefault();
-    addProductEntry();
-})
+    submitProductForm();
+  });
 </script>

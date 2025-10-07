@@ -38,7 +38,7 @@
         </div>
       {% endif %}
 
-      <form method="POST" action="" class="space-y-6">
+      <form id="loginForm" method="POST" action="" class="space-y-6">
         {% csrf_token %}
         
         <div>
@@ -79,8 +79,13 @@
 
         <button 
           type="submit" 
-          class="w-full bg-yellow-500 text-white font-medium py-3 px-4 rounded-md hover:bg-yellow-600 transition-colors">
-          Sign In
+          id="loginButton"
+          class="w-full bg-yellow-500 text-white font-medium py-3 px-4 rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <span id="loginButtonText">Sign In</span>
+          <svg id="loginSpinner" class="animate-spin h-5 w-5 text-white inline-block ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
         </button>
       </form>
 
@@ -133,5 +138,99 @@ function togglePassword(fieldId) {
     eyeClosed.classList.remove('hidden');
   }
 }
+
+// Clear previous error messages
+function clearErrorMessages() {
+  const errorContainers = document.querySelectorAll('.error-message');
+  errorContainers.forEach(container => container.remove());
+}
+
+// Show error messages
+function showErrorMessages(errors) {
+  clearErrorMessages();
+  
+  const form = document.getElementById('loginForm');
+  const errorContainer = document.createElement('div');
+  errorContainer.className = 'error-message mb-6';
+  
+  if (errors.non_field_errors) {
+    errors.non_field_errors.forEach(error => {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2';
+      errorDiv.textContent = error;
+      errorContainer.appendChild(errorDiv);
+    });
+  }
+  
+  if (errors.username) {
+    errors.username.forEach(error => {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2';
+      errorDiv.innerHTML = '<strong>Username:</strong> ' + error;
+      errorContainer.appendChild(errorDiv);
+    });
+  }
+  
+  if (errors.password) {
+    errors.password.forEach(error => {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2';
+      errorDiv.innerHTML = '<strong>Password:</strong> ' + error;
+      errorContainer.appendChild(errorDiv);
+    });
+  }
+  
+  form.insertBefore(errorContainer, form.firstChild);
+}
+
+// Handle login form submission
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const loginButton = document.getElementById('loginButton');
+  const loginButtonText = document.getElementById('loginButtonText');
+  const loginSpinner = document.getElementById('loginSpinner');
+  
+  // Show loading state
+  loginButton.disabled = true;
+  loginButtonText.textContent = 'Signing In...';
+  loginSpinner.classList.remove('hidden');
+  
+  clearErrorMessages();
+  
+  const formData = new FormData(this);
+  
+  try {
+    const response = await fetch('{% url "main:login_user" %}', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('Login Successful', `Welcome back, ${data.username}!`, 'success');
+      
+      // Redirect after short delay to show toast
+      setTimeout(() => {
+        window.location.href = data.redirect_url || '{% url "main:show_main" %}';
+      }, 1500);
+    } else {
+      showErrorMessages(data.errors);
+      showToast('Login Failed', 'Please check your credentials and try again.', 'error');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    showToast('Login Error', 'An unexpected error occurred. Please try again.', 'error');
+  } finally {
+    // Reset button state
+    loginButton.disabled = false;
+    loginButtonText.textContent = 'Sign In';
+    loginSpinner.classList.add('hidden');
+  }
+});
 </script>
 {% endblock content %}
