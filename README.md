@@ -184,3 +184,46 @@ Soal Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara s
     4. Konfigurasi static files pada aplikasi pada settings.py . 
     5. Membuat file global.css untuk form.
     6. Merubah kode html dengan menambahkan styling pada setiap halaman aplikasi.
+
+
+
+
+
+Tugas 6
+
+Soal apa perbedaan antara synchronous request dan asynchronous request?
+    1. synchronous request adalah ketika ada request yang dikirimkan oleh server, program harus menunggu respons sebelum melanjutkan eksekusi baris kode berikutnya.
+    2. asynchronous request adalah ketika ada request yang dikirimkan oleh server, program tidak menunggu hasilnya dan langsung melanjutkan eksekusi kode berikutnya.
+    Ketika respons sudah siap, callback atau promise akan menangani hasilnya.
+
+Soal bagaimana AJAX bekerja di Django (alur request–response)?
+    1. Client Side:
+        -  Suatu peristiwa terjadi di halaman web misalnya klik tombol "Suka," pengiriman formulir tanpa reload.
+        - JavaScript membuat request HTTP baru dan mengemas data yang diperlukan.
+        - Permintaan dikirim ke URL yang ditentukan. Alur eksekusi JavaScript tidak berhenti.
+    2. Server Side:
+        - Request AJAX tiba di server, dan Django's mencocokkan URL permintaan dengan pola yang didefinisikan dalam urls.py.
+        - Permintaan diteruskan ke fungsi View yang sesuai di views.py.
+        - Setelah memproses data, View membuat objek HttpResponse. Untuk permintaan AJAX, biasanya JsonResponse.
+    3. Client side:
+        - JavaScript menerima respons dari Django.
+        -  Fungsi callback atau promise dijalankan.
+        - JavaScript menggunakan data respons tersebut untuk memperbarui halaman yang diperlukan dari DOM.
+
+Soal apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+    - Tidak perlu reload halaman penuh.
+    - User experience (UX) lebih baik
+    - Leih responsif dan interaktif
+
+Soal Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+    1. Selalu gunakan HTTPS
+    2. Selalu menyertakan token CSRF. 
+    3. Batasi percobaan login per IP/emai dengan Django-ratelimit.
+    4. Gunakan Two-Factor Authentication atau OTP, contohnya dengan django-two-factor-auth.
+    5. Gunakan Captcha di register / login.
+
+Soal bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+    1. AJAX memungkinkan pembaruan real-time jadi misal kita menekan tombol like langsung terupdate jumlahnya.
+    2. AJAX memungkinkan menjaga kondisi halaman, seperti like tadi jadi kita ga perlu reload halaman misal kita sudah pada bagian bawah halaman.
+    3. Interaktif lebih baik, contohnya saat pengguna mengetik di kolom pencarian, AJAX secara asinkron mengambil dan menampilkan saran hasil pencarian dari server tanpa pengguna perlu menekan tombol 'Enter'
+
