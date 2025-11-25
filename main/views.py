@@ -13,6 +13,11 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
 
 
 @login_required(login_url='/login')
@@ -119,7 +124,6 @@ def register(request):
     form = UserCreationForm()
 
     if request.method == "POST":
-        # Handle AJAX request
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             form = UserCreationForm(request.POST)
             if form.is_valid():
@@ -135,7 +139,6 @@ def register(request):
                     'errors': form.errors
                 })
         
-        # Handle regular form submission
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
@@ -146,7 +149,6 @@ def register(request):
 
 def login_user(request):
    if request.method == 'POST':
-      # Handle AJAX request
       if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
           form = AuthenticationForm(data=request.POST)
           if form.is_valid():
@@ -163,7 +165,6 @@ def login_user(request):
                   'errors': form.errors
               })
       
-      # Handle regular form submission
       form = AuthenticationForm(data=request.POST)
       if form.is_valid():
             user = form.get_user()
@@ -179,11 +180,9 @@ def login_user(request):
 
 def logout_user(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Handle AJAX logout
         logout(request)
         return JsonResponse({'success': True, 'message': 'Logged out successfully'})
     
-    # Handle regular logout
     logout(request)
     response = HttpResponseRedirect(reverse('main:login_user'))
     response.delete_cookie('last_login')
@@ -320,3 +319,119 @@ def create_product_ajax(request):
             }, status=400)
     
     return JsonResponse({'success': False, 'message': 'Method not allowed'}, status=405)
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = strip_tags(data.get("name", ""))  # Strip HTML tags
+        price = data.get("price", 0)
+        description = strip_tags(data.get("description", ""))  # Strip HTML tags
+        category = data.get("category", "lainnya")
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+        user = request.user
+        
+        new_product = Product(
+            name=name, 
+            price=int(price) if price else 0,
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            user=user
+        )
+        new_product.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def show_products_flutter(request):
+    if request.method == 'GET':
+        products = Product.objects.select_related('user').all()
+        data = []
+        
+        for product in products:
+            data.append({
+                'id': str(product.id),
+                'name': product.name,
+                'price': product.price,
+                'description': product.description,
+                'category': product.category,
+                'thumbnail': product.thumbnail if product.thumbnail else '',
+                'product_views': product.product_views,
+                'created_at': product.created_at.isoformat() if product.created_at else None,
+                'is_featured': product.is_featured,
+                'user_id': product.user.id if product.user else None,
+                'user_username': product.user.username if product.user else 'Anonymous'
+            })
+        
+        return JsonResponse(data, safe=False, status=200)
+    else:
+        return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+
+@csrf_exempt
+def show_my_products_flutter(request):
+    if request.method == 'GET':
+        if not request.user.is_authenticated:
+            return JsonResponse({"status": "error", "message": "Authentication required"}, status=401)
+        
+        products = Product.objects.filter(user=request.user)
+        data = []
+        
+        for product in products:
+            data.append({
+                'id': str(product.id),
+                'name': product.name,
+                'price': product.price,
+                'description': product.description,
+                'category': product.category,
+                'thumbnail': product.thumbnail if product.thumbnail else '',
+                'product_views': product.product_views,
+                'created_at': product.created_at.isoformat() if product.created_at else None,
+                'is_featured': product.is_featured,
+                'user_id': product.user.id,
+                'user_username': product.user.username
+            })
+        
+        return JsonResponse(data, safe=False, status=200)
+    else:
+        return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+
+@csrf_exempt
+def logout_flutter(request):
+    if request.method == 'POST':
+        username = request.user.username if request.user.is_authenticated else None
+        
+        try:
+            logout(request)
+            return JsonResponse({
+                "status": "success",
+                "message": "Logged out successfully",
+                "username": username
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": f"Logout failed: {str(e)}"
+            }, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
